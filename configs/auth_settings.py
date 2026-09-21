@@ -8,3 +8,8 @@ class AuthSettings(BaseModel):
     keycloak_client_secret: str
     keycloak_redirect_uri: str
 
+    def token_url(self):
+        return f"{self.keycloak_base_url}/realms/{self.keycloak_realm}/protocol/openid-connect/token"
+
+    def user_info_url(self):
+        return f"{self.keycloak_base_url}/realms/{self.keycloak_realm}/protocol/openid-connect/userinfo"

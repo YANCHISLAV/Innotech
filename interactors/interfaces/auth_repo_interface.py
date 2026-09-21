@@ -3,9 +3,9 @@ from abc import ABC, abstractmethod
 class AuthRepoInterface(ABC):
 
     @abstractmethod
-    async def code_to_tokens(self, client, code):
+    async def code_to_tokens(self, code):
         pass
 
     @abstractmethod
-    async def tokens_to_user(self):
+    async def tokens_to_user(self, access_token: str):
         pass

@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
 
-class UserDTO(BaseModel):
-    username: str
+class FindUserDTO(BaseModel):
     uuid: str
