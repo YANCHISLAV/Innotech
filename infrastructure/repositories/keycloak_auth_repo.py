@@ -1,6 +1,7 @@
 from urllib.parse import urlencode
 
 from domain.users import User
+from interactors.exceptions.auth_exception import AuthenticationFailed
 from interactors.interfaces.auth_repo_interface import AuthRepoInterface
 
 class KeycloakAuthRepo(AuthRepoInterface):
@@ -17,14 +18,20 @@ class KeycloakAuthRepo(AuthRepoInterface):
             "client_secret": self.keycloak_settings.keycloak_client_secret,
             "redirect_uri": self.keycloak_settings.keycloak_redirect_uri,
         })
-
-        return response.json()
+        if response.status_code != 200:
+            raise AuthenticationFailed(f"Keycloak error: {response.text}")
+        try:
+            return response.json()
+        except ValueError as e:
+            raise AuthenticationFailed("Invalid response from Keycloak") from e
 
     async def tokens_to_user(self, access_token: str):
         response = await self.http_client.get(self.keycloak_settings.user_info_url,
                                               headers={"Authorization": f"Bearer {access_token}"}
                                               )
         data = response.json()
+        if "sub" not in data or "preferred_username" not in data:
+            raise AuthenticationFailed("Malformed userinfo response")
         return User(username=data["preferred_username"], uuid=data["sub"])
 
     async def url_to_redirect(self):

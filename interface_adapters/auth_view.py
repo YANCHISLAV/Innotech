@@ -18,8 +18,8 @@ async def callback(
 ):
         if error or not code:
             raise AuthenticationFailed(error or "Missing authorization code")
-        tokens = await auth_service.authenticate(code)
-        return tokens
+        await auth_service.authenticate(code)
+        return RedirectResponse(url="/", status_code=302)
 
 
 @router.get("/login")
