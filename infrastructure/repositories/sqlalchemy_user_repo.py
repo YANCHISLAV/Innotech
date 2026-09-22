@@ -23,4 +23,3 @@ class SQLAlchemyUserRepo(UserRepoInterface):
         self.session.add(user_model)
         await self.session.flush()
         await self.session.refresh(user_model)
-        await self.session.commit()

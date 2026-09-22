@@ -5,6 +5,7 @@ from fastapi import FastAPI
 
 from configs.settings_manager import get_settings
 from infrastructure.db.configs.session import DataBase
+from interface_adapters import auth_view
 
 
 @asynccontextmanager
@@ -18,7 +19,9 @@ async def lifespan(app: FastAPI):
         app.state.http_client = client
         yield
 
-    await db.dispose()
+        await db.dispose()
 app = FastAPI(lifespan=lifespan)
+
+app.include_router(auth_view.router)
 
 
